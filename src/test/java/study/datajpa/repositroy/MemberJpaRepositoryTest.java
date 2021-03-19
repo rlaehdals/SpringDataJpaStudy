@@ -365,7 +365,54 @@ class MemberJpaRepositoryTest {
         Example<Member> example = Example.of(member,matcher);
 
         List<Member> result = memberRepository.findAll(example);
-
     }
 
+    @Test
+    void projections(){
+
+        Team team = new Team("teamA");
+        em.persist(team);
+        Member m1 = new Member("m1", 0, team);
+        Member m2 = new Member("m2", 0, team);
+
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        List<UsernameOnly> m11 = memberRepository.findProjectionsByUsername("m1");
+
+//        List<NestedClosedProjections> m12 = memberRepository.findProjectionsByUsername("m1", NestedClosedProjections);
+
+    }
+    @Test
+    void nativeQuery(){
+        Team team = new Team("teamA");
+        em.persist(team);
+        Member m1 = new Member("m1", 0, team);
+        Member m2 = new Member("m2", 0, team);
+
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        Member result = memberRepository.findByNativeQuery("m1");
+    }
+    @Test
+    void pro(){
+        Team team = new Team("teamA");
+        em.persist(team);
+        Member m1 = new Member("m1", 0, team);
+        Member m2 = new Member("m2", 0, team);
+
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+        Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+    }
 }
